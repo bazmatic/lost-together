@@ -77,4 +77,4 @@ exports.decrypt = decrypt;
 
 var Mongoose = require('mongoose');
 exports.Mongoose = Mongoose;
-Mongoose.connect('mongodb://localhost/wow');
+Mongoose.connect('mongodb://localhost/lost-together');

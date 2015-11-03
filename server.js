@@ -21,7 +21,7 @@ app.set('port', PORT);
 
 app.get('/', function(req, res)
 {
-	res.status(200).send("Teem 0.1");
+	res.status(200).send("Lost Together 0.1");
 });
 
 app.post('/user', App.passThrough, User.signup);
