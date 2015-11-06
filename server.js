@@ -16,6 +16,7 @@ var App = require('./app.js');
 //=== App
 var app = Express();
 app.use(BodyParser.json());
+app.use(Utils.allowCrossDomain);
 
 app.set('port', Utils.PORT);
 

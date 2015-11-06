@@ -6,6 +6,15 @@ var SECRET = "vaU1p0sDnVbnPLwTlL1cXNGAhrczMAe1jSO27QcKBJQ=";
 var Handlebars = require("handlebars");
 var Crypto = require("crypto");
 
+var allowCrossDomain = function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+	res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+	next();
+};
+exports.allowCrossDomain = allowCrossDomain;
+
 function handleResponse(err, data, res, errCode)
 {
 	if (err)
