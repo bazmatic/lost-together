@@ -1,10 +1,9 @@
-exports.DEFAULT_APP = "frendl";
+exports.DEFAULT_APP = "woodfordfriends";
 exports.DOMAIN = "66.228.50.213";
-var DB_NAME = "wow";
+var DB_NAME = "friends"; //TODO: Move to a config file
 var SECRET = "vaU1p0sDnVbnPLwTlL1cXNGAhrczMAe1jSO27QcKBJQ=";
 var Handlebars = require("handlebars");
 var Crypto = require("crypto");
-
 
 function handleResponse(err, data, res, errCode)
 {
