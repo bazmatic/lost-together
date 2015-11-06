@@ -1,7 +1,7 @@
 var request = require('request');
 var querystring = require('querystring');
 var settings;
-var DEBUG = true;
+var DEBUG = false; //TODO: Change to config file or app setting
 
 var handle = (function(){
 	var self = this;
