@@ -1,5 +1,6 @@
 var request = require('request');
 var querystring = require('querystring');
+var Utils = require('./utils.js');
 var settings;
 var DEBUG = false; //TODO: Change to config file or app setting
 
@@ -32,12 +33,13 @@ var handle = (function(){
 						"username": self.settings.username,
 						"password": self.settings.password,
 						"to": to,
-						"from": from || self.settings.from,
+						"from": Utils.leftStr((from || self.settings.from), 10),
 						"maxsplit": self.settings.maxsplit,
 						"message": text
 					}
+					var url = self.settings.host + '?' + querystring.stringify(toSend);
 
-					request.get( self.settings.host + '?' + querystring.stringify(toSend), function( err ){
+					request.get( url, function( err ){
 						if (err)
 						{
 							console.error(err);

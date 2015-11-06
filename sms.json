@@ -1,7 +1,7 @@
 {
 	"host": "http://www.smsbroadcast.com.au/api-adv.php",
-	"username": "?",
-	"password": "?",
-	"from": "?",
+	"username": "kudos",
+	"password": "OrganicPonytails",
+	"from": "Woodford",
 	"maxsplit": 5
 }

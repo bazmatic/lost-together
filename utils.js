@@ -1,5 +1,6 @@
 exports.DEFAULT_APP = "woodfordfriends";
 exports.DOMAIN = "66.228.50.213";
+exports.PORT = 9375;
 var DB_NAME = "friends"; //TODO: Move to a config file
 var SECRET = "vaU1p0sDnVbnPLwTlL1cXNGAhrczMAe1jSO27QcKBJQ=";
 var Handlebars = require("handlebars");
@@ -33,14 +34,9 @@ function handleResponse(err, data, res, errCode)
 }
 exports.handleResponse = handleResponse;
 
-exports.whoopsPage = function(req, res)
+exports.handleWhoops = function(res)
 {
 	res.send("Whoops!");
-}
-
-exports.welcomePage = function(req, res)
-{
-	res.send("Welcome!");
 }
 
 exports.getToken = function()
@@ -74,6 +70,11 @@ function decrypt(text){
 }
 exports.decrypt = decrypt;
 
+function leftStr(s, len)
+{
+	return s.substring(0, Math.min(s.length,len));
+}
+exports.leftStr = leftStr;
 
 var Mongoose = require('mongoose');
 exports.Mongoose = Mongoose;

@@ -1,4 +1,5 @@
 var Utils = require('./utils.js');
+var App = require('./app.js');
 var Contact = require('./contact.js');
 var UserLocation = require('./userLocation.js');
 var FriendRequest = require('./friendRequest.js');
@@ -280,8 +281,9 @@ exports.signup = function(req, res)
 			templateData = {
 				"user": data,
 				"app": req.app,
-				"url": "http://" + Utils.DOMAIN + "/confirm/user?userId="+data.id+"&token="+data.token
+				"link": "http://" + Utils.DOMAIN + ":" + Utils.PORT + "/confirm/user?userId="+data.id+"&token="+data.token
 			};
+
 			var smsText = Utils.stringExchange(req.app.confirmUserText, templateData);
 			console.log("SMS text:", smsText);
 			Sms.sendSms(
@@ -294,7 +296,7 @@ exports.signup = function(req, res)
 					var result = user.toJSON();
 					if (smsData)
 					{
-						user.message = "Confirmation message sent";
+						result.message = "Confirmation message sent";
 					}
 
 					Utils.handleResponse(err, result, res, 500);
@@ -322,7 +324,25 @@ exports.confirm = function(req, res)
 			user.confirmed = true;
 			user.save(function(err, savedData)
 			{
-				Utils.handleResponse(err, savedData, res);
+				if (err)
+				{
+					Utils.handleWhoops(res);
+				}
+				else {
+					App.model.findOne(user.appId, function(err, app)
+					{
+						if (err || !app)
+						{
+							Utils.handleWhoops(res);
+						}
+						else
+						{
+							res.redirect(app.afterConfirmUserUrl);
+						}
+					});
+
+				}
+
 			});
 		}
 	});

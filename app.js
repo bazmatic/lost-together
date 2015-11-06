@@ -11,15 +11,19 @@ var AppSchema = new Utils.Mongoose.Schema({
 	"apiKey": { type: String, default: null, index: true },
 	"confirmUserText": {
 		type: String,
-		default: "Hello from {{app.name}}! Click on this link to confirm your account: {{link}}"
+		default: "Hello from {{app.name}}! Click on this link to confirm your account: {{{link}}}"
 	},
 	"confirmFollowText": {
 		type: String,
-		default: "Hi! I'd like to track your location with {{app.name}} Click on this link to let me see where you are! Cheers, {{name}} {{link}}"
+		default: "Hi! I'd like to track your location with {{app.name}} Click on this link to let me see where you are! Cheers, {{name}} {{{link}}}"
 	},
 	"installUrl": {
 		type: String,
 		required: true
+	},
+	"afterConfirmUserUrl": {
+		type: String,
+		default: "http://www.woodfordfolkfestival.com.au"
 	}
 });
 

@@ -11,13 +11,13 @@ var UserLocation = require('./userLocation.js');
 var App = require('./app.js');
 
 
-var PORT = "9375"; //PERS
+
 
 //=== App
 var app = Express();
 app.use(BodyParser.json());
 
-app.set('port', PORT);
+app.set('port', Utils.PORT);
 
 app.get('/', function(req, res)
 {
@@ -50,7 +50,7 @@ app.get('/app/:id', App.passThrough, App.getOne);
 
 
 //Start server
-Http.createServer(app).listen(PORT, function(){
+Http.createServer(app).listen(Utils.PORT, function(){
 	console.log('Web service listening on port ' + app.get('port'));
 });
 
