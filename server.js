@@ -49,6 +49,7 @@ app.get('/app/:id', App.passThrough, App.getOne);
 //app.delete('/app/place/:id', User.adminAuth, Place.deleteOne);
 
 
+console.log("Starting server on port", Utils.port);
 //Start server
 Http.createServer(app).listen(Utils.PORT, function(){
 	console.log('Web service listening on port ' + app.get('port'));
