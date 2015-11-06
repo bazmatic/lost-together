@@ -276,24 +276,28 @@ exports.signup = function(req, res)
 		}
 		else
 		{
-			console.log("Sending SMS");
+			console.log("Sending SMS to", user.mobile);
 			templateData = {
 				"user": data,
 				"app": req.app,
 				"url": "http://" + Utils.DOMAIN + "/confirm/user?userId="+data.id+"&token="+data.token
 			};
 			var smsText = Utils.stringExchange(req.app.confirmUserText, templateData);
+			console.log("SMS text:", smsText);
 			Sms.sendSms(
 				user.mobile,
 				smsText,
 				req.app.name,
 				function(err, smsData){
-					if (data)
+					console.log(smsData);
+
+					var result = user.toJSON();
+					if (smsData)
 					{
-						data.message = "Confirmation message sent";
+						user.message = "Confirmation message sent";
 					}
 
-					Utils.handleResponse(err, user.toJSON(), res, 500);
+					Utils.handleResponse(err, result, res, 500);
 				}
 			);
 		}
