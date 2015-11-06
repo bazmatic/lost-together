@@ -10,6 +10,7 @@ var UserSchema = new Utils.Mongoose.Schema(
 	{
 		"appId": { type: String, required: true, index: true },
 		"name": { type: String, required: true },
+		"avatar": String,
 		"mobile": { type: String, index: true, get: Utils.decrypt, set: Utils.encrypt},
 		"token": { type: String, required: false, index: true },
 		"location": { type: Object, required: false },
@@ -199,10 +200,14 @@ function _authUser( req, callback)
 	var appId = req.get("appId");
 	if (userId && token)
 	{
+		console.log(UserModel.collection.collectionName);
 		var q = { "_id": userId, "token": token, "confirmed": true, "appId": appId };
-		//console.log(q);
-		UserModel.findOne(q, function(err, user)
+		UserModel.findOne(q,function(err, user)
 		{
+			if (err)
+			{
+				console.error(err);
+			}
 			if (!user)
 			{
 				callback("Failed to authenticate user");

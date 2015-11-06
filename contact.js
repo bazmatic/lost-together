@@ -66,18 +66,42 @@ exports.model = ContactModel;
 
 //== Request handling ========================================
 
+//Add one or many Contacts
 exports.add = function(req, res)
 {
 	req.body.ownerId = req.user.id;
 	req.body.appId = req.app.id;
-	var contact = new ContactModel(req.body);
-	console.log("Saving contact", contact);
-	contact.save(
-		function(err, data)
+	var results = [];
+	var lastError;
+	var contacts;
+	if (typeof(req.body) === "object")
+	{
+		if (req.body.constructor === Array)
 		{
-			Utils.handleResponse(err, data, res);
+			contacts = req.body;
 		}
-	);
+		else
+		{
+			contacts = [ req.body ];
+		}
+
+		Async.each(
+			contacts,
+			function(contactData, callback)
+			{
+				var contact = new ContactModel(contactData);
+				results.push(contact);
+				contact.save(function(err)
+				{
+					callback(err);
+				});
+			},
+			function(err)
+			{
+				Utils.handleResponse(err, results, res);
+			}
+		);
+	}
 };
 
 exports.update = function(req, res)

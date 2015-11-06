@@ -1,5 +1,6 @@
 exports.DEFAULT_APP = "frendl";
 exports.DOMAIN = "66.228.50.213";
+var DB_NAME = "wow";
 var SECRET = "vaU1p0sDnVbnPLwTlL1cXNGAhrczMAe1jSO27QcKBJQ=";
 var Handlebars = require("handlebars");
 var Crypto = require("crypto");
@@ -77,4 +78,4 @@ exports.decrypt = decrypt;
 
 var Mongoose = require('mongoose');
 exports.Mongoose = Mongoose;
-Mongoose.connect('mongodb://localhost/lost-together');
+Mongoose.connect('mongodb://localhost/'+ DB_NAME);
