@@ -8,10 +8,8 @@ var User = require('./user.js');
 var Contact = require('./contact.js');
 var FriendRequest = require('./friendRequest.js');
 var UserLocation = require('./userLocation.js');
+var Place = require('./place.js');
 var App = require('./app.js');
-
-
-
 
 //=== App
 var app = Express();
@@ -25,30 +23,43 @@ app.get('/', function(req, res)
 	res.status(200).send("Lost Together 0.1");
 });
 
+//== User
 app.post('/user', App.passThrough, User.signup);
-app.put('/user', User.passThrough, App.passThrough, User.update);
-app.get('/user', User.passThrough, App.passThrough, User.getSelf)
+app.put('/user', App.passThrough, User.passThrough,  User.update);
+app.get('/user', App.passThrough, User.passThrough, User.getSelf);
+app.get('/users', App.adminPassThrough, User.passThrough, User.getAll);
+app.put('/user/:id', App.adminPassThrough, User.passThrough, User.update);
+
 //app.delete('/user', User.auth, User.delete);
 app.get('/confirm/user', User.confirm);
 
-app.post('/location', User.passThrough, App.passThrough, UserLocation.add);
+//== Locations
+app.post('/location', App.passThrough, User.passThrough, UserLocation.add);
+app.get('/locations', App.passThrough, User.passThrough, User.getAllowedLocations);
 
-app.post('/contact', User.passThrough, App.passThrough, Contact.add); //one or many
-app.put('/contact', User.passThrough, App.passThrough, Contact.update);
+//== Contacts
+app.post('/contact', App.passThrough, User.passThrough, Contact.add); //one or many
+app.put('/contact', App.passThrough, User.passThrough, Contact.update);
+app.get('/contact/:id', App.passThrough, User.passThrough, Contact.get);
+app.get('/contacts', App.passThrough, User.passThrough, Contact.get);
 
-app.get('/befriend/contact/:contactId', User.passThrough, App.passThrough, Contact.befriend);
-app.get('/befriend/user/:userId', User.passThrough, App.passThrough, User.befriend);
-app.get('/befriend/approve/:id', User.passThrough, App.passThrough, FriendRequest.approve);
+//== Friends
+app.get('/befriend/contact/:contactId', App.passThrough, User.passThrough, Contact.befriend);
+app.get('/befriend/user/:userId', App.passThrough, User.passThrough, User.befriend);
+app.get('/befriend/mobile/:number', App.passThrough, User.passThrough, User.befriendMobile);
+app.get('/befriend/approve/:id', App.passThrough, User.passThrough, FriendRequest.approve);
 
+//== Apps
 app.post('/app', App.post);
 app.put('/app', App.passThrough, App.post);
-app.get('/app/:id', App.passThrough, App.getOne);
+app.get('/app/:id', App.passThrough, App.get);
 
-//app.post('/app/place', User.adminAuth, Place.save);
-//app.get('/app/place/:id', User.adminAuth, Place.getOne);
-//app.get('/app/place', User.adminAuth, Place.list);
-//app.delete('/app/place/:id', User.adminAuth, Place.deleteOne);
-
+//== Place
+app.post('/place', App.adminPassThrough, User.passThrough, Place.add);
+app.put('/place', App.adminPassThrough, User.passThrough, Place.update);
+app.get('/place/:id', App.adminPassThrough, User.passThrough, Place.get);
+app.get('/place', App.adminPassThrough, User.passThrough, Place.get);
+app.delete('/place/:id', User.adminPassThrough, User.passThrough, Place.delete);
 
 console.log("Starting server on port", Utils.port);
 //Start server
