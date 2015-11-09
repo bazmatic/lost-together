@@ -1,4 +1,5 @@
 var Utils = require('./utils.js');
+var User = require('./user.js');
 var Timestamps = require('mongoose-timestamp');
 var Async = require('async');
 var Status =
@@ -54,17 +55,17 @@ FriendRequestSchema.statics.findReceived = function(myMobile, appId, callback)
 FriendRequestSchema.statics.findFriends = function(myMobile, appId, finalCallback)
 {
 	var friends = [];
+	var myMobileEncrypted = Utils.encrypt(myMobile);
 	this.find
 	(
 		{ 
 			$or:
 			[
-
 				{ 
-					requesterMobile: Utils.encrypt(myMobile),
+					requesterMobile: myMobileEncrypted,
 				},
 				{
-					requestedMobile: Utils.encrypt(myMobile)
+					requestedMobile: myMobileEncrypted
 				} 
 			],
 			appId: appId,
@@ -79,7 +80,6 @@ FriendRequestSchema.statics.findFriends = function(myMobile, appId, finalCallbac
 					approvedRequests,
 					function _getOtherUser(friendRequest, callback)
 					{
-
 						var otherMobile = (friendRequest.requestedMobile == myMobile)?friendRequest.requesterMobile:friendRequest.requestedMobile;
 						
 						User.model.getByMobile(otherMobile, appId, function(err, friend)
@@ -138,7 +138,7 @@ FriendRequestSchema.statics.send = function(fromMobile, toMobile, appId, callbac
 	});
 }
 
-FriendRequestSchema.methods.approve = function(requestId, user, callback)
+FriendRequestSchema.statics.approve = function(requestId, user, callback)
 {
 	this.findOneAndUpdate
 	(
@@ -149,7 +149,15 @@ FriendRequestSchema.methods.approve = function(requestId, user, callback)
 		{
 			$set: { status: Status.approved}
 		},
-		callback
+		function(err, data)
+		{
+			if (data)
+			{
+				data.status = Status.approved;
+			}
+			callback(err, data);
+		}
+
 	);
 };
 
