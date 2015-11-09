@@ -60,8 +60,6 @@ exports.stringExchange = function(template, vars)
 }
 
 function encrypt(text){
-	//console.trace("Encrypting", text);
-
 	var cipher = Crypto.createCipher('aes-256-cbc', SECRET);
 	var crypted = cipher.update(text,'utf8','hex');
 	crypted += cipher.final('hex');
@@ -70,7 +68,6 @@ function encrypt(text){
 exports.encrypt = encrypt;
 
 function decrypt(text){
-	//console.log("Decrypting", text);
 	if (text === null || typeof text === 'undefined') {return text;};
 	var decipher = Crypto.createDecipher('aes-256-cbc', SECRET);
 	var dec = decipher.update(text,'hex','utf8');
