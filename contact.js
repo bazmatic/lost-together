@@ -26,6 +26,7 @@ var ContactSchema = new Utils.Mongoose.Schema(
 		}
 	}
 );
+
 ContactSchema.plugin(Timestamps);
 
 ContactSchema.statics.getMyById = function(myId, contactId, callback)
@@ -115,6 +116,24 @@ exports.update = function(req, res)
 			Utils.handleResponse(err, data, res);
 		}
 	);
+};
+
+exports.get = function(req, res)
+{
+	if (req.params.id)
+	{
+		ContactModel.findOne({appId: req.app.id, ownerId: req.user.id, _id: req.params.id}, function(err, data)
+		{
+			Utils.handleResponse(err, data, res);
+		});
+	}
+	else
+	{
+		ContactModel.findMy(req.user.id, function(err, data)
+		{
+			Utils.handleResponse(err, data, res);
+		});
+	}
 };
 
 exports.befriend = function(req, res)
