@@ -14,31 +14,57 @@
 	</form>
 	<button onclick="javascript:signup()">Sign up</button>
 
+	<hr />
+
+	<form id="contact">
+		<label for="name">Name</label>
+		<input type="text" name="name">
+		<label for="name">Mobile number</label>
+		<input type="text" name="mobile">
+	</form>
+	<button onclick="javascript:addContact()">Add contact</button>
+
+	<hr />
+
 	<script>
 		var user;
+		var data = {};
+
+		function attributes(x)
+		{
+			data[x.name] = x.value;
+		}
+
+		function saveContact()
+		{
+			$('#contact').serializeArray().map(attributes);
+
+			$.ajax({
+				url:"http://66.228.50.213:9375/contact",
+				type:"POST",
+				beforeSend: function(xhr){
+					xhr.setRequestHeader("Content-Type","application/json");
+					xhr.setRequestHeader("userId", user.id);
+					xhr.setRequestHeader("token", user.token);
+					xhr.setRequestHeader("apiKey", "test");
+					xhr.setRequestHeader("appId", "563c1ff88c0717a32e4fac6e");
+				},
+				data: JSON.stringify(data),
+				dataType:"json"
+			});
+		}
+
 		function signup()
 		{
-			var data = {};
-			$('#signup').serializeArray().map(function(x){data[x.name] = x.value;});
-			console.log(JSON.stringify(data));
+			$('#signup').serializeArray().map(attributes);
 
-			/*$.post(
-					"",
-					data,
-					function(successData)
-					{
-						user = successData;
-						console.log(successData);
-					}
-			)*/
-			console.log()
 			$.ajax({
 				url:"http://66.228.50.213:9375/user",
 				type:"POST",
 				beforeSend: function(xhr){
-					xhr.setRequestHeader("Content-Type","application/json");
-					xhr.setRequestHeader("apiKey","test");
-					xhr.setRequestHeader("appId","563c1ff88c0717a32e4fac6e");
+					xhr.setRequestHeader("Content-Type", "application/json");
+					xhr.setRequestHeader("apiKey", "test");
+					xhr.setRequestHeader("appId", "563c1ff88c0717a32e4fac6e");
 				},
 				data: JSON.stringify(data),
 				dataType:"json"
