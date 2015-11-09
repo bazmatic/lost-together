@@ -8,7 +8,8 @@ var AppSchema = new Utils.Mongoose.Schema({
 	"createdByIp": { type: String, required: false },
 	"createdByName": { type: String, required: true },
 	"createdByEmail": { type: String, required: true },
-	"apiKey": { type: String, default: null, index: true },
+	"apiKey": { type: String, default: null, index: true }, //TODO: Change to array
+	"adminKey": { type: String, required: false },
 	"confirmUserText": {
 		type: String,
 		default: "Hello from {{app.name}}! Click on this link to confirm your account: {{{link}}}"
@@ -43,17 +44,27 @@ exports.post = function(req, res)
 	});
 };
 
-exports.getOne = function(req, res)
+exports.get = function(req, res)
 {
 	Utils.handleResponse(err, req.app, res)
 };
 
 
-function _authApp(req, callback)
+function authApp(req, callback)
 {
 	var appId = req.get("appId");
-	var apiKey = req.get("apiKey");
-	AppModel.findOne({ "_id": appId, "apiKey": apiKey}, function(err, data)
+	var q =
+	{
+		_id: appId
+	};
+	if (req.get("adminKey"))
+	{
+		q.adminKey = req.get("adminKey");
+	}
+	else {
+		q.apiKey = req.get("apiKey");
+	}
+	AppModel.findOne(q, function(err, data)
 	{
 		if (!data)
 		{
@@ -61,16 +72,23 @@ function _authApp(req, callback)
 		}
 		else
 		{
-			req.app = data;
+			if (data)
+			{
+				req.app = data;
+				if (q.adminKey)
+				{
+					req.admin = true;
+				}
+			}
 			callback(err, data);
-
 		}
 	})
 }
+exports.authApp = authApp;
 
 exports.passThrough = function(req, res, next)
 {
-	_authApp(req, function(err, data)
+	authApp(req, function(err, data)
 	{
 		if (err)
 		{
@@ -81,6 +99,25 @@ exports.passThrough = function(req, res, next)
 			next();
 		}
 
+	});
+}
+
+exports.adminPassThrough = function(req, res, next)
+{
+	authApp(req, function(err, data)
+	{
+		if (!req.admin)
+		{
+			err = "Not authorised to perform this function."
+		}
+		if (err)
+		{
+			Utils.handleResponse(err, null, res, 403);
+		}
+		else
+		{
+			next();
+		}
 	});
 }
 
