@@ -14,7 +14,24 @@ var UserSchema = new Utils.Mongoose.Schema(
 		appId: { type: String, required: true, index: true },
 		name: { type: String, required: true },
 		avatar: String,
-		mobile: { type: String, index: true, get: Utils.decrypt, set: Utils.encrypt},
+		mobile: {
+			type: String,
+			index: true,
+			required: true,
+			get: Utils.decrypt,
+			set: function(value)
+			{
+				value = Utils.encrypt(Utils.normalisePhoneNumber(value));
+				return value;
+			},
+			validate: {
+				validator: function(value)
+				{
+					return Utils.normalisePhoneNumber(Utils.decrypt(value));
+				},
+				message: "{VALUE} is not a valid phone number"
+			}
+		},
 		token: { type: String, required: false, index: true },
 		location: { type: Object, required: false },
 		confirmed: { type: Boolean, default: false },

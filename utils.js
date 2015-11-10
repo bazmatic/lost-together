@@ -5,6 +5,7 @@ var DB_NAME = "friends"; //TODO: Move to a config file
 var SECRET = "vaU1p0sDnVbnPLwTlL1cXNGAhrczMAe1jSO27QcKBJQ=";
 var Handlebars = require("handlebars");
 var Crypto = require("crypto");
+var Phone = require('phone');
 
 var allowCrossDomain = function(req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*');
@@ -81,6 +82,21 @@ function leftStr(s, len)
 	return s.substring(0, Math.min(s.length,len));
 }
 exports.leftStr = leftStr;
+
+function normalisePhoneNumber(number, defaultCountry)
+{
+	var phoneData = Phone(number, defaultCountry || "AU"); //TODO: Add this as a configuration setting
+	if (phoneData && phoneData.constructor == Array && phoneData.length > 0)
+	{
+		return phoneData[0];
+	}
+	else
+	{
+		return null;
+	}
+
+}
+exports.normalisePhoneNumber = normalisePhoneNumber;
 
 var Mongoose = require('mongoose');
 exports.Mongoose = Mongoose;

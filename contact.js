@@ -11,7 +11,24 @@ var ContactSchema = new Utils.Mongoose.Schema(
 		"appId": String,
 		"ownerId": String,
 		"name": String,
-		"mobile": { type: String, index: true, get: Utils.decrypt, set: Utils.encrypt}
+		"mobile":
+		{
+			type: String,
+			index: true,
+			get: Utils.decrypt,
+			set: function(value)
+			{
+				value = Utils.encrypt(Utils.normalisePhoneNumber(value));
+				return value;
+			},
+			validate: {
+				validator: function(value)
+				{
+					return Utils.normalisePhoneNumber(Utils.decrypt(value));
+				},
+				message: "{VALUE} is not a valid phone number"
+			}
+		}
 	},
 	{
 		"toJSON":
