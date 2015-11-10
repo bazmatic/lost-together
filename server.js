@@ -61,7 +61,6 @@ app.get('/place/:id', App.adminPassThrough, User.passThrough, Place.get);
 app.get('/place', App.adminPassThrough, User.passThrough, Place.get);
 app.delete('/place/:id', User.adminPassThrough, User.passThrough, Place.delete);
 
-console.log("Starting server on port", Utils.port);
 //Start server
 Http.createServer(app).listen(Utils.PORT, function(){
 	console.log('Web service listening on port ' + app.get('port'));
