@@ -48,6 +48,7 @@ app.get('/befriend/contact/:contactId', App.passThrough, User.passThrough, Conta
 app.get('/befriend/user/:userId', App.passThrough, User.passThrough, User.befriend);
 app.get('/befriend/mobile/:number', App.passThrough, User.passThrough, User.befriendMobile);
 app.get('/befriend/approve/:id', App.passThrough, User.passThrough, FriendRequest.approve);
+app.get('/befriend/unapprove/:id', App.passThrough, User.passThrough, FriendRequest.unapprove);
 
 //== Apps
 app.post('/app', App.post);
@@ -71,3 +72,4 @@ process.on('uncaughtException', function(err) {
 	// handle the error safely
 	console.log("SAFETY NET", err.stack);
 });
+

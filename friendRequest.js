@@ -138,43 +138,28 @@ FriendRequestSchema.statics.send = function(fromMobile, toMobile, appId, callbac
 	});
 }
 
-FriendRequestSchema.statics.approve = function(requestId, user, callback)
+FriendRequestSchema.statics.setStatus = function(requestId, user, status, callback)
 {
 	this.findOneAndUpdate
 	(
-		{
-			_id: requestId,
-			requestedMobile: Utils.encrypt(user.mobile)
-		},
-		{
-			$set: { status: Status.approved}
-		},
-		function(err, data)
-		{
-			if (data)
 			{
-				data.status = Status.approved;
+				_id: requestId,
+				requestedMobile: Utils.encrypt(user.mobile)
+			},
+			{
+				$set: { status: Status[status]}
+			},
+			function(err, data)
+			{
+				if (data)
+				{
+					data.status = Status[status];
+				}
+				callback(err, data);
 			}
-			callback(err, data);
-		}
 
 	);
-};
-
-FriendRequestSchema.methods.deny = function(requestId, user, callback)
-{
-	this.findOneAndUpdate
-	(
-		{
-			_id: requestId,
-			requestedMobile: Utils.encrypt(user.mobile)
-		},
-		{
-			$set: { status: Status.denied}
-		},
-		callback
-	);
-};
+}
 
 var FriendRequestModel = Utils.Mongoose.model
 	(
@@ -188,12 +173,21 @@ exports.model = FriendRequestModel;
 exports.approve = function(req, res)
 {
 
-	FriendRequestModel.approve(req.params.id, req.user, function(err, data)
+	FriendRequestModel.setStatus(req.params.id, req.user, Status.approved, function(err, data)
 	{
 		Utils.handleResponse(err, data, res);
 	});
 };
 
+exports.unapprove = function(req, res)
+{
+	FriendRequestModel.setStatus(req.params.id, req.user, Status.pending, function(err, data)
+	{
+		Utils.handleResponse(err, data, res);
+	});
+};
+
+/*
 exports.deny = function(req, res)
 {
 	FriendRequestModel.deny(req.params.id, req.user, function(err, data)
@@ -201,3 +195,4 @@ exports.deny = function(req, res)
 		Utils.handleResponse(err, data, res);
 	});
 };
+*/
