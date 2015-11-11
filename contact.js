@@ -4,6 +4,7 @@ var FriendRequest = require('./friendRequest.js');
 var Sms = require('./sms.js');
 //var Encrypt = require('mongoose-encryption');
 var Async = require('async');
+var _ = require('underscore');
 var Timestamps = require('mongoose-timestamp');
 
 var ContactSchema = new Utils.Mongoose.Schema(
@@ -33,7 +34,7 @@ var ContactSchema = new Utils.Mongoose.Schema(
 	{
 		"toJSON":
 		{
-			"getters": true,
+			"getters": false,
 			"transform": function(doc, ret, options)
 			{
 				delete ret.ownerId;
@@ -68,6 +69,15 @@ ContactSchema.statics.findByMobile = function(mobile, callback)
 ContactSchema.statics.findMy = function(ownerId, callback)
 {
 	this.find({ "ownerId": ownerId }, callback);
+};
+
+ContactSchema.statics.findMyUsers = function(ownerId, callback)
+{
+	this.find({ "ownerId": ownerId }, function(err, users)
+	{
+		var mobileList = _.pluck(users, 'mobile').map(Utils.encrypt);
+		User.model.find({ mobile: {$in: mobileList}}, callback);
+	});
 };
 
 ContactSchema.methods.friendRequest = function()

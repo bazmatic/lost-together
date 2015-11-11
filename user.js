@@ -81,9 +81,13 @@ UserSchema.methods.startup = function(finalCallback)
 	var self = this;
 	Async.parallel(
 		[
-			function _contacts(callback)
+			/*function _contacts(callback)
 			{
 				self.getContacts(callback)
+			},*/
+			function _userContacts(callback)
+			{
+				self.getUserContacts(callback)
 			},
 			function _sent(callback)
 			{
@@ -101,9 +105,9 @@ UserSchema.methods.startup = function(finalCallback)
 	);
 }
 
-UserSchema.virtual('contacts').get(function()
+UserSchema.virtual('userContacts').get(function()
 {
-	return this._contacts;
+	return this._userContacts;
 });
 
 UserSchema.virtual('sentFriendRequests').get(function()
@@ -144,7 +148,7 @@ UserSchema.statics.findPublic = function(appId, callback)
 	});
 }
 
-
+/*
 UserSchema.methods.getContacts = function(callback)
 {
 	var self = this;
@@ -154,6 +158,21 @@ UserSchema.methods.getContacts = function(callback)
 		if (contactList)
 		{
 			self._contacts = contactList;
+		}
+		callback(err);
+	});
+};
+*/
+
+UserSchema.methods.getUserContacts = function(callback)
+{
+	var self = this;
+	self._userContacts = [];
+	Contact.model.findMyUsers(this._id, function(err, userList)
+	{
+		if (userList)
+		{
+			self._userContacts = userList;
 		}
 		callback(err);
 	});
