@@ -24,7 +24,7 @@ var AppSchema = new Utils.Mongoose.Schema({
 	},
 	"afterConfirmUserUrl": {
 		type: String,
-		default: "http://www.woodfordfolkfestival.com.au"
+		required: true
 	}
 });
 
