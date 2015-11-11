@@ -69,13 +69,21 @@ function encrypt(text){
 exports.encrypt = encrypt;
 
 function decrypt(text){
-	console.log("About to decrypt", text, SECRET);
-	if (text === null || typeof text === 'undefined') {console.log("No text");return text;};
-	var decipher = Crypto.createDecipher('aes-256-cbc', SECRET);
-	var dec = decipher.update(text,'hex','utf8');
-	dec += decipher.final('utf8');
-	console.log("Decrypted text", dec);
-	return dec;
+	//console.log("About to decrypt", text, SECRET);
+	try
+	{
+		if (text === null || typeof text === 'undefined') {console.log("No text");return text;};
+		var decipher = Crypto.createDecipher('aes-256-cbc', SECRET);
+		var dec = decipher.update(text,'hex','utf8');
+		dec += decipher.final('utf8');
+		return dec;
+	}
+	catch (e)
+	{
+		console.log('Utils.decrypt:',e);
+		return text;
+	}
+
 }
 exports.decrypt = decrypt;
 
