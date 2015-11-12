@@ -60,27 +60,101 @@ var FriendRequestSchema = new Utils.Mongoose.Schema(
 	}
 );
 
-//FriendRequestSchema.plugin(Timestamps);
+FriendRequestSchema.plugin(Timestamps);
 
-FriendRequestSchema.statics.findSent = function(myMobile, appId, callback)
+FriendRequestSchema.methods.fetchRequester = function(callback)
 {
-	this.find(
+	var self = this;
+
+	User.model.getByMobile(self.requesterMobile, self.appId, function(err, user)
+	{
+		if (user)
+		{
+			self._requesterUser = user;
+		}
+		callback(err);
+	});
+};
+
+FriendRequestSchema.methods.fetchRequested = function(callback)
+{
+	var self = this;
+
+	User.model.getByMobile(self.requestedMobile, self.appId, function(err, user)
+	{
+		if (user)
+		{
+			self._requestedUser = user;
+		}
+		callback(err);
+	});
+}
+
+FriendRequestSchema.virtual('requesterUser').get(function()
+{
+	if (this._requesterUser)
+	{
+		return this._requesterUser.secure();	
+	}
+	else {
+		return;
+	}
+});
+
+FriendRequestSchema.virtual('requestedUser').get(function()
+{
+	if (this._requestedUser)
+	{
+		return this._requestedUser.secure();		
+	}
+	else {
+		return;
+	}
+});
+
+FriendRequestSchema.statics.findSent = function(myMobile, appId, finalCallback)
+{
+	this.find
+	(
 		{ 
 			requesterMobile: Utils.encrypt(myMobile),
 			appId: appId
 		},
-		callback
+		function(err, sentItems)
+		{
+			Async.eachSeries
+			(
+				sentItems,
+				function(item, callback)
+				{
+					item.fetchRequested(callback);	
+				},
+				finalCallback(err, sentItems)
+			);
+		}
 	);
 };
 
-FriendRequestSchema.statics.findReceived = function(myMobile, appId, callback)
+FriendRequestSchema.statics.findReceived = function(myMobile, appId, finalCallback)
 {
-	this.find(
+	this.find
+	(
 		{ 
 			requestedMobile: Utils.encrypt(myMobile),
 			appId: appId
 		},
-		callback
+		function(err, sentItems)
+		{
+			Async.eachSeries
+			(
+				sentItems,
+				function(item, callback)
+				{
+					item.fetchRequester(callback);	
+				},
+				finalCallback(err, sentItems)
+			);
+		}
 	);
 };
 

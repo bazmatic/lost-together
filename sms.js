@@ -2,7 +2,7 @@ var request = require('request');
 var querystring = require('querystring');
 var Utils = require('./utils.js');
 var settings;
-var DEBUG = false; //TODO: Change to config file or app setting
+var DEBUG = true; //TODO: Change to config file or app setting
 
 var handle = (function(){
 	var self = this;

@@ -23,6 +23,11 @@ app.get('/', function(req, res)
 	res.status(200).send("Lost Together 0.1");
 });
 
+app.get('/', function(req, res)
+{
+	res.send('Lost Together v0.1');
+});
+
 //== User
 app.post('/user', App.passThrough, User.signup);
 app.put('/user', App.passThrough, User.passThrough,  User.update);
@@ -63,8 +68,8 @@ app.get('/place', App.adminPassThrough, User.passThrough, Place.get);
 app.delete('/place/:id', User.adminPassThrough, User.passThrough, Place.delete);
 
 //Start server
-Http.createServer(app).listen(Utils.PORT, function(){
-	console.log('Web service listening on port ' + app.get('port'));
+Http.createServer(app).listen(process.env.PORT, process.env.IP, function(){
+	console.log('Web service listening at', process.env.IP, 'on port ', process.env.PORT);
 });
 
 //Exception safety net
