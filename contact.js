@@ -117,12 +117,25 @@ exports.add = function(req, res)
 			contacts,
 			function(contactData, callback)
 			{
-				var contact = new ContactModel(contactData);
-				results.push(contact);
-				contact.save(function(err)
+				try {
+					var contact = new ContactModel(contactData);
+					results.push(contact);
+					contact.save(function(err)
+					{
+						if (err)
+						{
+							console.log("Error adding Contact:", err);
+							contact.error = err;
+						}
+						callback(null);
+					});
+				}
+				catch(e)
 				{
-					callback(err);
-				});
+					console.log("Error adding Contact:", e);
+					contact.error = e;
+				}
+
 			},
 			function(err)
 			{
