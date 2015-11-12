@@ -125,6 +125,16 @@ UserSchema.virtual('friends').get(function()
 	return this._friends;
 });
 
+/*
+UserSchema.virtual('allItems').get(function()
+{
+	var friends = _map(this._friends, function(item){ item.toJSON().type = "friend"});
+	var userContacts = _map(this._friends, function(item){ item.toJSON().type = "contact"});
+	var all = friends.concat(userContacts);
+	return all;
+});
+*/
+
 UserSchema.statics.getById = function(id, callback)
 {
 	this.find({ "_id": id}, callback);
@@ -183,7 +193,7 @@ UserSchema.methods.findReceivedFriendRequests = function(callback)
 	console.log('User.findReceivedFriendRequests');
 	var self = this;
 	self._receivedFriendRequests = [];
-	FriendRequest.model.findReceived(Utils.encrypt(this.mobile), this.appId, function(err, friendRequests)
+	FriendRequest.model.findReceived(this.mobile, this.appId, function(err, friendRequests)
 	{
 		self._receivedFriendRequests = friendRequests;
 		callback(err);
@@ -195,7 +205,7 @@ UserSchema.methods.findSentFriendRequests = function(callback)
 	console.log('User.findSentFriendRequests');
 	var self = this;
 	self._sentFriendRequests = [];
-	FriendRequest.model.findSent(Utils.encrypt(this.mobile), this.appId, function(err, friendRequests)
+	FriendRequest.model.findSent(this.mobile, this.appId, function(err, friendRequests)
 	{
 		self._sentFriendRequests = friendRequests;
 		callback(err);

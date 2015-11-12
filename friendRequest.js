@@ -12,8 +12,40 @@ var Status =
 var FriendRequestSchema = new Utils.Mongoose.Schema(
 	{
 		appId: String,
-		requesterMobile: { type: String, index: true, get: Utils.decrypt, set: Utils.encrypt},
-		requestedMobile: { type: String, index: true, get: Utils.decrypt, set: Utils.encrypt},
+		requesterMobile: {
+			type: String,
+			index: true,
+			get: Utils.decrypt,
+			set: function(value)
+			{
+				value = Utils.encrypt(Utils.normalisePhoneNumber(value));
+				return value;
+			},
+			validate: {
+				validator: function(value)
+				{
+					return Utils.normalisePhoneNumber(Utils.decrypt(value));
+				},
+				message: "{VALUE} is not a valid phone number"
+			}
+		},
+		requestedMobile: {
+			type: String,
+			index: true,
+			get: Utils.decrypt,
+			set: function(value)
+			{
+				value = Utils.encrypt(Utils.normalisePhoneNumber(value));
+				return value;
+			},
+			validate: {
+				validator: function(value)
+				{
+					return Utils.normalisePhoneNumber(Utils.decrypt(value));
+				},
+				message: "{VALUE} is not a valid phone number"
+			}
+		},
 		status: { type: String, default: Status.pending }
 	},
 	{
@@ -34,7 +66,7 @@ FriendRequestSchema.statics.findSent = function(myMobile, appId, callback)
 {
 	this.find(
 		{ 
-			requesterMobile: myMobile,
+			requesterMobile: Utils.encrypt(myMobile),
 			appId: appId
 		},
 		callback
@@ -45,7 +77,7 @@ FriendRequestSchema.statics.findReceived = function(myMobile, appId, callback)
 {
 	this.find(
 		{ 
-			requestedMobile: myMobile,
+			requestedMobile: Utils.encrypt(myMobile),
 			appId: appId
 		},
 		callback
