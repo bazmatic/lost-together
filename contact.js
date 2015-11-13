@@ -73,10 +73,28 @@ ContactSchema.statics.findMy = function(ownerId, callback)
 
 ContactSchema.statics.findMyUsers = function(ownerId, callback)
 {
-	this.find({ "ownerId": ownerId }, function(err, users)
-	{
-		var mobileList = _.pluck(users, 'mobile').map(Utils.encrypt);
-		User.model.find({ mobile: {$in: mobileList}}, callback);
+	this.find({ "ownerId": ownerId }, function(err, contacts)
+	{	
+		var mobileList = _.pluck(contacts, 'mobile').map(Utils.encrypt);
+		
+		User.model.find({ mobile: {$in: mobileList}}, function(err, users)
+		{
+			if (users)
+			{
+				//Ensure the owner is not included in the results
+				
+				var result = _.filter(users, function(user)
+				{
+					return (user._id !== ownerId)	
+				});
+				callback(err, result);
+			
+			}
+			else
+			{
+				callback(err);
+			}
+		});
 	});
 };
 
