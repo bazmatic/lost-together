@@ -97,8 +97,6 @@ exports.model = ContactModel;
 //Add one or many Contacts
 exports.add = function(req, res)
 {
-	req.body.ownerId = req.user.id;
-	req.body.appId = req.app.id;
 	var results = [];
 	var lastError;
 	var contacts;
@@ -118,6 +116,8 @@ exports.add = function(req, res)
 			function(contactData, callback)
 			{
 				try {
+					contactData.ownerId = req.user.id;
+					contactData.appId = req.app.id;
 					var contact = new ContactModel(contactData);
 					results.push(contact);
 					contact.save(function(err)
