@@ -479,7 +479,7 @@ exports.getAllowedLocations = function(req, res)
 {
 	var result = {
 		friends: [],
-		locations: [],
+		places: [],
 		publicUsers: []
 	};
 	var tags = null;
@@ -495,7 +495,7 @@ exports.getAllowedLocations = function(req, res)
 	}
 	Async.parallel(
 		[
-			function _locations(callback)
+			function _places(callback)
 			{
 				Place.model.findByTags(req.app.id, tags, function(err, data)
 				{
