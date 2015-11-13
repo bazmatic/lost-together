@@ -182,7 +182,6 @@ exports.befriend = function(req, res)
 	console.log("Contact.befriend");
 	ContactModel.getMyById(req.user.id, req.params.contactId, function(err, contact)
 	{
-		console.log(0);
 		if (contact)
 		{
 			console.log(FriendRequest.model.sen);
@@ -193,7 +192,6 @@ exports.befriend = function(req, res)
 		}
 		else
 		{
-			console.log(2);
 			Utils.handleResponse(err, null, res, 404);
 		}
 	});
