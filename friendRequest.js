@@ -190,14 +190,21 @@ FriendRequestSchema.statics.findFriends = function(myMobile, appId, finalCallbac
 						
 						User.model.getByMobile(otherMobile, appId, function(err, friend)
 						{
-							if (friend.location && friend.location.timestamp)
+							if (!err && friend)
 							{
-								if (new Date().getTime() - friend.location.timestamp > Utils.USER_LOCATION_TTL)
+								if (friend.location && friend.location.timestamp)
 								{
-									delete friend.location;
+									if (new Date().getTime() - friend.location.timestamp > Utils.USER_LOCATION_TTL)
+									{
+										delete friend.location;
+									}
 								}
+								friends.push(friend);
 							}
-							friends.push(friend);
+							else {
+								console.error("friendRequest.findFriends():", err);
+							}
+
 							callback(null);
 						});
 					},
