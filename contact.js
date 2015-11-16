@@ -73,10 +73,28 @@ ContactSchema.statics.findMy = function(ownerId, callback)
 
 ContactSchema.statics.findMyUsers = function(ownerId, callback)
 {
-	this.find({ "ownerId": ownerId }, function(err, users)
-	{
-		var mobileList = _.pluck(users, 'mobile').map(Utils.encrypt);
-		User.model.find({ mobile: {$in: mobileList}}, callback);
+	this.find({ "ownerId": ownerId }, function(err, contacts)
+	{	
+		var mobileList = _.pluck(contacts, 'mobile').map(Utils.encrypt);
+		
+		User.model.find({ mobile: {$in: mobileList}}, function(err, users)
+		{
+			if (users)
+			{
+				//Ensure the owner is not included in the results
+				
+				var result = _.filter(users, function(user)
+				{
+					return (user._id !== ownerId)	
+				});
+				callback(err, result);
+			
+			}
+			else
+			{
+				callback(err);
+			}
+		});
 	});
 };
 
@@ -97,8 +115,6 @@ exports.model = ContactModel;
 //Add one or many Contacts
 exports.add = function(req, res)
 {
-	req.body.ownerId = req.user.id;
-	req.body.appId = req.app.id;
 	var results = [];
 	var lastError;
 	var contacts;
@@ -118,6 +134,8 @@ exports.add = function(req, res)
 			function(contactData, callback)
 			{
 				try {
+					contactData.ownerId = req.user.id;
+					contactData.appId = req.app.id;
 					var contact = new ContactModel(contactData);
 					results.push(contact);
 					contact.save(function(err)
@@ -182,7 +200,6 @@ exports.befriend = function(req, res)
 	console.log("Contact.befriend");
 	ContactModel.getMyById(req.user.id, req.params.contactId, function(err, contact)
 	{
-		console.log(0);
 		if (contact)
 		{
 			console.log(FriendRequest.model.sen);
@@ -193,7 +210,6 @@ exports.befriend = function(req, res)
 		}
 		else
 		{
-			console.log(2);
 			Utils.handleResponse(err, null, res, 404);
 		}
 	});

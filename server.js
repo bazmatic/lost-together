@@ -69,7 +69,7 @@ app.delete('/place/:id', User.adminPassThrough, User.passThrough, Place.delete);
 
 //Start server
 Http.createServer(app).listen(process.env.PORT, process.env.IP, function(){
-	console.log('Web service listening at', process.env.IP, 'on port ', process.env.PORT);
+	console.log('Web service listening at', process.env.IP, 'on port', process.env.PORT);
 });
 
 //Exception safety net
