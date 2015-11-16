@@ -386,7 +386,7 @@ exports.signup = function(req, res)
 				templateData = {
 					user: userData,
 					app: req.app,
-					link: 'http://' + Utils.DOMAIN + ':' + Utils.PORT + '/confirm/user?userId='+userData.id+'&token='+userData.token
+					link: 'http://' + Utils.DOMAIN + ':' + Utils.PORT + '/confirm/user?userId='+userData._id+'&token='+userData.token
 				};
 
 				var smsText = Utils.stringExchange(req.app.confirmUserText, templateData);
