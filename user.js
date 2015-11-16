@@ -340,47 +340,81 @@ exports.getSelf = function(req, res)
 
 exports.signup = function(req, res)
 {
+	var existingUser = false;
+	var userData = null;
+	var smsSent = false;
 	var user = new UserModel(req.body);
 	user.confirmed = false;
 	user.token = Utils.getToken();
 	//user.mobile = Utils.encrypt(user.mobile);
 	user.appId = req.get('appId') || Utils.DEFAULT_APP;
 	user.confirmed = false;
-	user.save(function(err, data) {
-		//This is a new signup, therefore we need to get confirmation back
-		if (err)
-		{
-			console.error(err);
-			Utils.handleResponse(err, data, res);
-		}
-		else
-		{
-			console.log('Sending SMS to', user.mobile);
-			templateData = {
-				user: data,
-				app: req.app,
-				link: 'http://' + Utils.DOMAIN + ':' + Utils.PORT + '/confirm/user?userId='+data.id+'&token='+data.token
-			};
+	Async.series(
+		[
+			function _checkExisting(callback)
+			{
 
-			var smsText = Utils.stringExchange(req.app.confirmUserText, templateData);
-			Sms.sendSms(
-				user.mobile,
-				smsText,
-				req.app.name,
-				function(err, smsData){
-					console.log(smsData);
-
-					var result = user.toJSON();
-					if (smsData)
+				UserSchema.getByMobile(user.mobile, user.appId, function(err, data)
+				{
+					//If attempting to sign up with an existing number, don't save
+					if (data)
 					{
-						result.message = 'Confirmation message sent';
+						existingUser = true;
 					}
-
-					Utils.handleResponse(err, result, res, 500);
+				});
+			},
+			function _save(callback)
+			{
+				if (existingUser)
+				{
+					userData = user.toObject();
+					callback(null);
 				}
-			);
+				else
+				{
+					user.save(function(err, data)
+					{
+						userData = data;
+						callback(null);
+					});
+				}
+			},
+			function _sms(callback)
+			{
+				console.log('Sending SMS to', user.mobile);
+				templateData = {
+					user: userData,
+					app: req.app,
+					link: 'http://' + Utils.DOMAIN + ':' + Utils.PORT + '/confirm/user?userId='+userData.id+'&token='+userData.token
+				};
+
+				var smsText = Utils.stringExchange(req.app.confirmUserText, templateData);
+				Sms.sendSms(
+					user.mobile,
+					smsText,
+					req.app.name,
+					function(err, smsData){
+
+						if (smsData)
+						{
+							smsSent = true;
+						};
+
+						callback(err);
+					}
+				);
+			}
+		],
+		function(err)
+		{
+			var result = user.toJSON();
+			if (smsSent)
+			{
+				results.message = "SMS sent";
+			}
+			Utils.handleResponse(err, result, res, 500);
 		}
-	});
+	);
 }
 
 exports.confirm = function(req, res)
