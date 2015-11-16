@@ -354,7 +354,7 @@ exports.signup = function(req, res)
 			function _checkExisting(callback)
 			{
 
-				UserSchema.getByMobile(user.mobile, user.appId, function(err, data)
+				UserModel.getByMobile(user.mobile, user.appId, function(err, data)
 				{
 					//If attempting to sign up with an existing number, don't save
 					if (data)
