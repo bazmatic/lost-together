@@ -411,7 +411,7 @@ exports.signup = function(req, res)
 			var result = user.toJSON();
 			if (smsSent)
 			{
-				results.message = "SMS sent";
+				result.message = "SMS sent";
 			}
 			Utils.handleResponse(err, result, res, 500);
 		}
