@@ -523,9 +523,7 @@ exports.getAllowedLocations = function(req, res)
 	}
 	if (req.params.tags)
 	{
-		//TODO: Turn into array
 		tags = req.params.tags.split(',');
-		tags = null; //TODO
 	}
 	Async.parallel(
 		[

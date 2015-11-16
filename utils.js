@@ -1,6 +1,8 @@
 exports.DEFAULT_APP = "woodfordfriends";
 exports.DOMAIN = process.env.IP;
 exports.PORT = process.env.PORT;
+exports.USER_LOCATION_TTL = 5 * 60 * 60 * 1000;
+
 var DB_NAME = "friends"; //TODO: Move to a config file
 var SECRET = "vaU1p0sDnVbnPLwTlL1cXNGAhrczMAe1jSO27QcKBJQ=";
 var Handlebars = require("handlebars");
