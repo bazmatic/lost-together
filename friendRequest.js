@@ -190,7 +190,21 @@ FriendRequestSchema.statics.findFriends = function(myMobile, appId, finalCallbac
 						
 						User.model.getByMobile(otherMobile, appId, function(err, friend)
 						{
-							friends.push(friend);
+							if (!err && friend)
+							{
+								if (friend.location && friend.location.timestamp)
+								{
+									if (new Date().getTime() - friend.location.timestamp > Utils.USER_LOCATION_TTL)
+									{
+										delete friend.location;
+									}
+								}
+								friends.push(friend);
+							}
+							else {
+								console.error("friendRequest.findFriends():", err);
+							}
+
 							callback(null);
 						});
 					},
@@ -244,14 +258,18 @@ FriendRequestSchema.statics.send = function(fromMobile, toMobile, appId, callbac
 	});
 }
 
-FriendRequestSchema.statics.setStatus = function(requestId, user, status, callback)
+FriendRequestSchema.statics.setStatus = function(requestId, user, status, either, callback)
 {
+	var query =	{
+		_id: requestId
+	};
+	if (!either)
+	{
+		query.requestedMobile = Utils.encrypt(user.mobile)
+	}
 	this.findOneAndUpdate
 	(
-			{
-				_id: requestId,
-				requestedMobile: Utils.encrypt(user.mobile)
-			},
+			query,
 			{
 				$set: { status: Status[status]}
 			},
@@ -267,6 +285,7 @@ FriendRequestSchema.statics.setStatus = function(requestId, user, status, callba
 	);
 }
 
+
 var FriendRequestModel = Utils.Mongoose.model
 	(
 		"FriendRequest", FriendRequestSchema
@@ -279,7 +298,7 @@ exports.model = FriendRequestModel;
 exports.approve = function(req, res)
 {
 
-	FriendRequestModel.setStatus(req.params.id, req.user, Status.approved, function(err, data)
+	FriendRequestModel.setStatus(req.params.id, req.user, Status.approved, false, function(err, data)
 	{
 		Utils.handleResponse(err, data, res);
 	});
@@ -287,7 +306,7 @@ exports.approve = function(req, res)
 
 exports.unapprove = function(req, res)
 {
-	FriendRequestModel.setStatus(req.params.id, req.user, Status.pending, function(err, data)
+	FriendRequestModel.setStatus(req.params.id, req.user, Status.pending, true, function(err, data)
 	{
 		Utils.handleResponse(err, data, res);
 	});
