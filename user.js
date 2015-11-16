@@ -361,6 +361,7 @@ exports.signup = function(req, res)
 					{
 						existingUser = true;
 					}
+					callback(err);
 				});
 			},
 			function _save(callback)
