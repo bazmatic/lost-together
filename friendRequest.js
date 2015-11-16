@@ -192,7 +192,7 @@ FriendRequestSchema.statics.findFriends = function(myMobile, appId, finalCallbac
 						{
 							if (friend.location && friend.location.timestamp)
 							{
-								if (Date.getTime() - friend.location.timestamp > Utils.USER_LOCATION_TTL)
+								if (new Date().getTime() - friend.location.timestamp > Utils.USER_LOCATION_TTL)
 								{
 									delete friend.location;
 								}
