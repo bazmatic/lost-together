@@ -113,4 +113,6 @@ exports.normalisePhoneNumber = normalisePhoneNumber;
 
 var Mongoose = require('mongoose');
 exports.Mongoose = Mongoose;
-Mongoose.connect('mongodb://localhost/'+ DB_NAME);
+//Mongoose.connect('mongodb://66.228.50.213/'+ DB_NAME);
+console.log('Connecting to mongo...');
+Mongoose.connect('mongodb://localhost/'+ DB_NAME, function(err){if(err)console.error(err); else console.log("Connected OK");});
