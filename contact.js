@@ -61,7 +61,7 @@ ContactSchema.statics.findMyByMobile = function(mobile, ownerId, callback)
 ContactSchema.statics.findByMobile = function(mobile, callback)
 {
 	var q = { "mobile": Utils.encrypt(mobile) };
-	console.log("Contact.findByMobile()", q);
+	//console.log("Contact.findByMobile()", q);
 	this.find(q, callback);
 
 };
@@ -202,7 +202,7 @@ exports.befriend = function(req, res)
 	{
 		if (contact)
 		{
-			console.log(FriendRequest.model.sen);
+			//console.log(FriendRequest.model.sen);
 			FriendRequest.model.send(req.user.mobile, contact.mobile, req.app.id, function(err, friendRequest)
 			{
 				Utils.handleResponse(err, friendRequest, res);

@@ -18,6 +18,12 @@ var allowCrossDomain = function(req, res, next) {
 };
 exports.allowCrossDomain = allowCrossDomain;
 
+var logRequest = function(req, res, next) {
+	console.log(req.ip, req.originalUrl);
+	next();
+};
+exports.logRequest = logRequest;
+
 function handleResponse(err, data, res, errCode)
 {
 	if (err)
@@ -102,7 +108,7 @@ function normalisePhoneNumber(number, defaultCountry)
 	if (phoneNumber)
 	{
 		var result = phoneUtil.format(phoneNumber, Phone.PhoneNumberFormat.INTERNATIONAL);
-		console.log(result);
+		//console.log(result);
 		return result;
 	}
 	else

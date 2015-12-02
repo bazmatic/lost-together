@@ -200,7 +200,7 @@ UserSchema.methods.getUserContacts = function(callback)
 
 UserSchema.methods.findReceivedFriendRequests = function(callback)
 {
-	console.log('User.findReceivedFriendRequests');
+	//console.log('User.findReceivedFriendRequests');
 	var self = this;
 	self._receivedFriendRequests = [];
 	FriendRequest.model.findReceived(this.mobile, this.appId, function(err, friendRequests)
@@ -212,7 +212,7 @@ UserSchema.methods.findReceivedFriendRequests = function(callback)
 
 UserSchema.methods.findSentFriendRequests = function(callback)
 {
-	console.log('User.findSentFriendRequests');
+	//console.log('User.findSentFriendRequests');
 	var self = this;
 	self._sentFriendRequests = [];
 	FriendRequest.model.findSent(this.mobile, this.appId, function(err, friendRequests)
@@ -224,7 +224,7 @@ UserSchema.methods.findSentFriendRequests = function(callback)
 
 UserSchema.methods.findFriends = function(callback)
 {
-	console.log('User.findFriends');
+	//console.log('User.findFriends');
 	var self = this;
 	self._friends = [];
 
