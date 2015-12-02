@@ -199,6 +199,7 @@ FriendRequestSchema.statics.findFriends = function(myMobile, appId, finalCallbac
 										delete friend.location;
 									}
 								}
+								friend.set('requestId', friendRequest._id);
 								friends.push(friend);
 							}
 							else {

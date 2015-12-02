@@ -105,6 +105,16 @@ UserSchema.methods.startup = function(finalCallback)
 	);
 }
 
+UserSchema.virtual('requestId').get(function()
+{
+	return this._requestId;
+});
+
+UserSchema.virtual('requestId').set(function(id)
+{
+	this._requestId = id;
+});
+
 UserSchema.virtual('userContacts').get(function()
 {
 	return this._userContacts;
@@ -137,7 +147,7 @@ UserSchema.virtual('allItems').get(function()
 
 UserSchema.statics.getById = function(id, callback)
 {
-	this.find({ "_id": id}, callback);
+	this.findOne({ "_id": id}, callback);
 };
 
 UserSchema.statics.getByMobile = function(mobile, appId, callback)
