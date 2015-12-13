@@ -33,7 +33,23 @@ var UserSchema = new Utils.Mongoose.Schema(
 			}
 		},
 		token: { type: String, required: false, index: true },
-		location: { type: Object, required: false },
+		location: {
+			type: Object,
+			required: false,
+			get: function(loc)
+			{
+				if (loc && loc.timestamp)
+				{
+					var now = new Date().getTime();
+					var elapsed = now - loc.timestamp;
+					if (elapsed > Utils.USER_LOCATION_TTL)
+					{
+						loc = null;
+					}
+				}
+				return loc;
+			}
+		},
 		confirmed: { type: Boolean, default: false },
 		public: { type: Boolean, default: false }
 	},
