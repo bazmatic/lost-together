@@ -1,7 +1,7 @@
 exports.DEFAULT_APP = "woodfordfriends";
 exports.DOMAIN = process.env.IP || "66.228.50.213;"
 exports.PORT = process.env.PORT || 9375;
-exports.USER_LOCATION_TTL = 5 * 60 * 1000;
+exports.USER_LOCATION_TTL = 10 * 60 * 1000;
 
 var DB_NAME = "friends"; //TODO: Move to a config file
 var SECRET = "vaU1p0sDnVbnPLwTlL1cXNGAhrczMAe1jSO27QcKBJQ=";
